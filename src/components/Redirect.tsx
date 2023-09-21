@@ -1,21 +1,10 @@
 import React, { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
-import styled from 'styled-components';
-
-const Container = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  font-size: 24px;
-  background-color: ${(props) => props.theme.background};
-  color: ${(props) => props.theme.color};
-`;
 
 const Redirect = () => {
   const { code } = useParams<{ code: string }>();
-
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchUrl = async () => {
       try {
@@ -23,13 +12,14 @@ const Redirect = () => {
         window.location.href = response.data;
       } catch (error) {
         console.error(error);
+        navigate('/');
       }
     };
 
     fetchUrl();
-  }, [code]);
+  }, [code, navigate]);
 
-  return <Container>Redirecting...</Container>;
+  return <>Redirecting...</>;
 };
 
 export default Redirect;

@@ -1,19 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import styled from 'styled-components';
-import ThemeSwitch from './ThemeSwitch';
 import { Link } from 'react-router-dom';
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  background-color: ${(props) => props.theme.background};
-  color: ${(props) => props.theme.color};
-  padding: 0 20px;
-`;
 
 const Title = styled.h1`
   font-size: 2.5em;
@@ -57,6 +45,7 @@ export const LinkTo = styled(Link)`
 
 const Shorten = () => {
   const [url, setUrl] = useState('');
+  const [alias, setAlias] = useState('');
   const [shortUrl, setShortUrl] = useState('');
 
   const isValidUrl = (urlInput: string) => {
@@ -77,7 +66,7 @@ const Shorten = () => {
       alert('URL is not valid');
     } else {
       try {
-        const response = await axios.post('/shorten', { url });
+        const response = await axios.post('/shorten', { url, alias });
         setShortUrl(`${window.location.origin}/${response.data.code}`);
       } catch (error) {
         console.error(error);
@@ -88,20 +77,24 @@ const Shorten = () => {
 
   return (
     <>
-      <ThemeSwitch />
-      <Container>
-        <Title>Link.Trim()</Title>
-        <Form onSubmit={handleSubmit}>
-          <Input
-            type="url"
-            value={url}
-            onChange={(e) => setUrl(e.target.value)}
-            placeholder="Enter URL"
-          />
-          <Button type="submit">Shorten</Button>
-        </Form>
-        {shortUrl && <p>Short URL: <LinkTo to={shortUrl} target='_blank'>{shortUrl}</LinkTo></p>}
-      </Container>
+      <Title>Link.Trim()</Title>
+      <Form onSubmit={handleSubmit}>
+        <Input
+          type="url"
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+          placeholder="Enter URL"
+        />
+        <Input
+          type="text"
+          value={alias}
+          onChange={(e) => setAlias(e.target.value)}
+          placeholder="Alias(optional)"
+          pattern="^[A-Za-z0-9]+$"
+        />
+        <Button type="submit">Shorten</Button>
+      </Form>
+      {shortUrl && <p>Short URL: <LinkTo to={shortUrl} target='_blank'>{shortUrl}</LinkTo></p>}
     </>
   );
 };
